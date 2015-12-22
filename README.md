@@ -22,9 +22,9 @@ Objects returned by `procedure` have four methods:
 
 The provided `callback` must have type `function(error, result)` or be left unspecified. Arguments are:
 * `error`, null if no error detected, otherwise an object with the following members:
-** `httpStatus`, the numeric HTTP status code.
-** `httpStatusText`, the HTTP status message.
-** `description`, additional description of the error may be included here.
+ * `httpStatus`, the numeric HTTP status code.
+ * `httpStatusText`, the HTTP status message.
+ * `description`, additional description of the error may be included here.
 * `result`, if no error has been detected, this will be the deserialized JSON value returned by the remote server.
 
 #### Example
