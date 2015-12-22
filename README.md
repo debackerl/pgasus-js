@@ -27,11 +27,13 @@ The provided `callback` must have type `function(error, result)` or be left unsp
 ** `description`, additional description of the error may be included here.
 * `result`, if no error has been detected, this will be the deserialized JSON value returned by the remote server.
 
-=== Example ===
+#### Example
 
+```
 var ws = new WebService("https://test.com");
 var login = ws.procedure("/users/:user_id/login").post;
 login({"user_id": "bob", "password": "$3cur3"}, function(res) {
   var projectTasks = ws.relation("/projects/:project_id/tasks");
   projectTasks.get({"project_id": 100}, null, QM.Order("dueDate"), null, function(res) { });
 });
+```
