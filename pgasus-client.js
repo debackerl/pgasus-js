@@ -27,7 +27,8 @@ function WebService(baseUrl, username, password) {
 		
 		var done = {}, url = ws.baseUrl + path.replace(/\/[:*]([\w_]+)/g, function(_, id) {
 			done[id] = true;
-			return "/" + encodeURIComponent(parameters[id]);
+			var v = parameters[id];
+			return "/" + (v ? encodeURIComponent(v) : "");
 		}) + ".json";
 		
 		var qs = querystring(done);
@@ -36,7 +37,8 @@ function WebService(baseUrl, username, password) {
 		req.open(method, url, true, ws.user, ws.password);
 		
 		switch(method) {
-		case "POST","PUT":
+		case "POST":
+		case "PUT":
 			var body = {};
 			for(var id in parameters)
 				if(Object.prototype.hasOwnProperty.call(parameters, id) && !done[id])
@@ -90,7 +92,8 @@ function WebService(baseUrl, username, password) {
 					load_resource(method, path, parameters, function(done) {
 						var qs = [];
 						switch(method) {
-						case "GET","DELETE":
+						case "GET":
+						case "DELETE":
 							for(var id in parameters)
 								if(Object.prototype.hasOwnProperty.call(parameters, id) && !done[id])
 									qs.push(id + "=" + encodeURIComponent(JSON.stringify(parameters[id])));
