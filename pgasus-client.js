@@ -13,7 +13,18 @@ function WebService(baseUrl, username, password) {
 	var xhr = XMLHttpRequest || require("xmlhttprequest").XMLHttpRequest;
 	
 	function load_resource(method, path, parameters, querystring, callback) {
+		var res;
 		var req = new xhr();
+		
+		if(!callback && Promise) {
+			res = new Promise(function(resolve, reject) {
+				callback = function(error, result) {
+					if(error) reject(error);
+					else resolve(result);
+				};
+			});
+		}
+		
 		if(callback)
 			req.onreadystatechange = function() {
 				if(req.readyState == 4) {
@@ -51,19 +62,19 @@ function WebService(baseUrl, username, password) {
 			req.send();
 			break;
 		}
-	}
-	
-	function omap(f) {
-		var res = {}, o = {"get":"GET","put":"PUT","post":"POST","del":"DELETE"};
-		for(var id in o) res[id] = f(o[id]);
+		
 		return res;
 	}
 	
+	function omap(f) {
+		return {get:f("GET"), put:f("PUT"), post:f("POST"), del:f("DELETE")};
+	}
+	
 	return {
-		"relation": function(path) {
+		relation: function(path) {
 			var res = omap(function(method) {
 				return function(parameters, filter, callback) {
-					load_resource(method, path, parameters, function() {
+					return load_resource(method, path, parameters, function() {
 						var qs = [];
 						if(filter) qs.push(ws.filter + "=" + filter);
 						return qs;
@@ -71,25 +82,25 @@ function WebService(baseUrl, username, password) {
 				};
 			});
 			res.get = function(parameters, filter, sort, limit, callback) {
-				load_resource("GET", path, parameters, function() {
+				return load_resource("GET", path, parameters, function() {
 					var qs = [];
 					if(filter) qs.push(ws.filter + "=" + filter);
 					if(sort) qs.push(ws.sort + "=" + sort);
-					if(typeof(limit) === "number") qs.push(ws.limit + "=" + limit);
+					if(typeof(limit) === "number") qs.push(ws.limit + "=" + ~~limit);
 					return qs;
 				}, callback);
 			};
 			res.post = function(parameters, callback) {
-				load_resource("POST", path, parameters, function() {
+				return load_resource("POST", path, parameters, function() {
 					return [];
 				}, callback);
 			};
 			return res;
 		},
-		"procedure": function(path) {
+		procedure: function(path) {
 			return omap(function(method) {
 				return function(parameters, callback) {
-					load_resource(method, path, parameters, function(done) {
+					return load_resource(method, path, parameters, function(done) {
 						var qs = [];
 						switch(method) {
 						case "GET":
