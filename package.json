@@ -2,11 +2,14 @@
 	"name": "pgasus",
 	"title": "client library for pgasus",
 	"version": "1.0.0",
+	"main": "pgasus-client",
 	"author": "Laurent Debacker <debackerl gmail com>",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/debackerl/pgasus-js.git"
 	},
-	"dependencies": {}
+	"dependencies": {
+		"xmlhttprequest": "1.x"
+	}
 }
