@@ -10,23 +10,23 @@ To access pgasus-backed web service, create a new `WebService` object.
 
 Objects returned by `relation` have four methods:
 * `get(parameters, options, callback)`
-** `options`: `filter` (use [queryme](https://github.com/debackerl/queryme) expression), `order` (use QM.Sort or QM.Order), `limit` (number), `cookie` (string)
+ * `options`: `filter` (use [queryme](https://github.com/debackerl/queryme) expression), `order` (use QM.Sort or QM.Order), `limit` (number), `cookie` (string)
 * `post(parameters, options, callback)`
-** `options`: `cookie` (string)
+ * `options`: `cookie` (string)
 * `put(parameters, options, callback)`
-** `options`: `filter` (use [queryme](https://github.com/debackerl/queryme) expression), `cookie` (string)
+ * `options`: `filter` (use [queryme](https://github.com/debackerl/queryme) expression), `cookie` (string)
 * `del(parameters, options, callback)`, for `delete` HTTP method (delete is a reserved keyword in ECMAScript)
-** `options`: `filter` (use [queryme](https://github.com/debackerl/queryme) expression), `cookie` (string)
+ * `options`: `filter` (use [queryme](https://github.com/debackerl/queryme) expression), `cookie` (string)
 
 Objects returned by `procedure` have four methods:
 * `get(parameters, options, callback)`
-** `options`: `cookie` (string)
+ * `options`: `cookie` (string)
 * `post(parameters, options, callback)`
-** `options`: `cookie` (string)
+ * `options`: `cookie` (string)
 * `put(parameters, options, callback)`
-** `options`: `cookie` (string)
+ * `options`: `cookie` (string)
 * `del(parameters, options, callback)`, for `delete` HTTP method (delete is a reserved keyword in ECMAScript)
-** `options`: `cookie` (string)
+ * `options`: `cookie` (string)
 
 The provided `callback` must have type `function(error, result)` or be left unspecified. Arguments are:
 * `error`, null if no error detected, otherwise an object with the following members:
