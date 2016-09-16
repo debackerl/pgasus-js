@@ -1,4 +1,4 @@
-// Copyright (c) 2015, Laurent Debacker
+// Copyright (c) 2015-2016, Laurent Debacker
 // MIT License
 
 function WebService(baseUrl, username, password) {
@@ -12,9 +12,10 @@ function WebService(baseUrl, username, password) {
 	var ws = this;
 	var xhr = XMLHttpRequest || require("xmlhttprequest").XMLHttpRequest;
 	
-	function load_resource(method, path, parameters, querystring, callback) {
+	function load_resource(method, path, parameters, options, querystring, callback) {
 		var res;
 		var req = new xhr();
+		if(options && options.cookie) req.headers['Cookie'] = options.cookie;
 		
 		if(!callback && Promise) {
 			res = new Promise(function(resolve, reject) {
@@ -45,7 +46,7 @@ function WebService(baseUrl, username, password) {
 		var qs = querystring(done);
 		if(qs.length) url += "?" + qs.join("&");
 		
-		req.open(method, url, true, ws.user, ws.password);
+		req.open(method, url, true, ws.username, ws.password);
 		
 		switch(method) {
 		case "POST":
@@ -73,25 +74,27 @@ function WebService(baseUrl, username, password) {
 	return {
 		relation: function(path) {
 			var res = omap(function(method) {
-				return function(parameters, filter, callback) {
-					return load_resource(method, path, parameters, function() {
+				return function(parameters, options, callback) {
+					return load_resource(method, path, parameters, options, function() {
 						var qs = [];
-						if(filter) qs.push(ws.filter + "=" + filter);
+						if(options && options.filter) qs.push(ws.filter + "=" + options.filter);
 						return qs;
 					}, callback);
 				};
 			});
-			res.get = function(parameters, filter, sort, limit, callback) {
-				return load_resource("GET", path, parameters, function() {
+			res.get = function(parameters, options, callback) {
+				return load_resource("GET", path, parameters, options, function() {
 					var qs = [];
-					if(filter) qs.push(ws.filter + "=" + filter);
-					if(sort) qs.push(ws.sort + "=" + sort);
-					if(typeof(limit) === "number") qs.push(ws.limit + "=" + ~~limit);
+					if(options) {
+						if(options.filter) qs.push(ws.filter + "=" + options.filter);
+						if(options.sort) qs.push(ws.sort + "=" + options.sort);
+						if(typeof(options.limit) === "number") qs.push(ws.limit + "=" + ~~options.limit);
+					}
 					return qs;
 				}, callback);
 			};
-			res.post = function(parameters, callback) {
-				return load_resource("POST", path, parameters, function() {
+			res.post = function(parameters, options, callback) {
+				return load_resource("POST", path, parameters, options, function() {
 					return [];
 				}, callback);
 			};
@@ -99,8 +102,8 @@ function WebService(baseUrl, username, password) {
 		},
 		procedure: function(path) {
 			return omap(function(method) {
-				return function(parameters, callback) {
-					return load_resource(method, path, parameters, function(done) {
+				return function(parameters, options, callback) {
+					return load_resource(method, path, parameters, options, function(done) {
 						var qs = [];
 						switch(method) {
 						case "GET":
