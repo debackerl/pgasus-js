@@ -44,8 +44,10 @@ var ws = new WebService("https://test.com");
 var login = ws.procedure("/users/:user_id/login").post;
 var projectTasks = ws.relation("/projects/:project_id/tasks");
 
-login({"user_id": "bob", "password": "$3cur3"}, function(res) {
-  projectTasks.get({"project_id": 100}, {order: QM.Order("dueDate")}, function(res) { });
+login({"user_id": "bob", "password": "$3cur3"}, function(err, res) {
+  if(err != null) {
+    projectTasks.get({"project_id": 100}, {order: QM.Order("dueDate")}, function(res) { });
+  }
 });
 ```
 
