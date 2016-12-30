@@ -18,19 +18,28 @@
 			var req = new xhr();
 			if(options && options.cookie) req.headers['Cookie'] = options.cookie;
 			
-			if(!callback && Promise) {
+			if(!callback && typeof(Promise) !== 'undefined')
 				res = new Promise(function(resolve, reject) {
 					callback = function(error, result) {
 						if(error) reject(error);
 						else resolve(result);
 					};
 				});
-			}
+			else
+				res = {};
+			
+			// compatible with 'Dodgy'
+			req.abort = function(reason) {
+				if(req.readyState !== 4) {
+					req.abort();
+					if(callback) callback({"httpStatus": null, "httpStatusText": null, "description": reason, aborted: true});
+				}
+			};
 			
 			if(callback)
 				req.onreadystatechange = function() {
-					if(req.readyState == 4) {
-						if(req.status == 200) {
+					if(req.readyState === 4) {
+						if(req.status === 200) {
 							callback(null, JSON.parse(req.responseText));
 						} else {
 							callback({"httpStatus": req.status, "httpStatusText": req.statusText, "description": req.responseText});
