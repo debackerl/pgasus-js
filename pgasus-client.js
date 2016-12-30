@@ -29,7 +29,7 @@
 				res = {};
 			
 			// compatible with 'Dodgy'
-			req.abort = function(reason) {
+			res.abort = function(reason) {
 				if(req.readyState !== 4) {
 					req.abort();
 					if(callback) callback({"httpStatus": null, "httpStatusText": null, "description": reason, aborted: true});
