@@ -11,12 +11,13 @@
 		this.limit = "l";
 		
 		var ws = this;
-		var xhr = typeof(XMLHttpRequest) !== 'undefined' ? XMLHttpRequest : require("xmlhttprequest").XMLHttpRequest;
+		var xhr = typeof(XMLHttpRequest) !== 'undefined' ? XMLHttpRequest : require("w3c-xmlhttprequest").XMLHttpRequest;
 		
 		function load_resource(method, path, parameters, options, querystring, callback) {
 			var res;
 			var req = new xhr();
-			if(options && options.cookie) req.headers['Cookie'] = options.cookie;
+			if(options && options.cookie && req._properties)
+				req._properties.requestHeaders['Cookie'] = options.cookie;
 			
 			if(!callback && typeof(Promise) !== 'undefined')
 				res = new Promise(function(resolve, reject) {
@@ -28,7 +29,6 @@
 			else
 				res = {};
 			
-			// compatible with 'Dodgy'
 			res.abort = function(reason) {
 				if(req.readyState !== 4) {
 					req.abort();
@@ -39,11 +39,19 @@
 			if(callback)
 				req.onreadystatechange = function() {
 					if(req.readyState === 4) {
+						var err = null, result = null;
+
 						if(req.status === 200) {
-							callback(null, JSON.parse(req.responseText));
+							try {
+								result = JSON.parse(req.responseText);
+							} catch(e) {
+								err = e;
+							}
 						} else {
-							callback({"httpStatus": req.status, "httpStatusText": req.statusText, "description": req.responseText});
+							err = {"httpStatus": req.status, "httpStatusText": req.statusText, "description": req.responseText};
 						}
+
+						callback(err, result);
 					}
 				};
 			
