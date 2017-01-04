@@ -11,13 +11,13 @@
 		this.limit = "l";
 		
 		var ws = this;
-		var xhr = typeof(XMLHttpRequest) !== 'undefined' ? XMLHttpRequest : require("w3c-xmlhttprequest").XMLHttpRequest;
+		var xhr = typeof(XMLHttpRequest) !== 'undefined' ? XMLHttpRequest : require("xmlhttprequest-light").XMLHttpRequest;
 		
 		function load_resource(method, path, parameters, options, querystring, callback) {
 			var res;
 			var req = new xhr();
-			if(options && options.cookie && req._properties)
-				req._properties.requestHeaders['Cookie'] = options.cookie;
+			if(options && options.cookie) // Node.js only
+				req.headers['Cookie'] = options.cookie;
 			
 			if(!callback && typeof(Promise) !== 'undefined')
 				res = new Promise(function(resolve, reject) {
