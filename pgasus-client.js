@@ -2,10 +2,11 @@
 // MIT License
 
 (function(exports) {
-	exports.WebService = function(baseUrl, username, password) {
+	exports.WebService = function(baseUrl, username, password, options) {
 		this.baseUrl = baseUrl;
 		this.username = username;
 		this.password = password;
+		this.options = options;
 		this.filter = "f";
 		this.sort = "s";
 		this.limit = "l";
@@ -16,6 +17,8 @@
 		function load_resource(method, path, parameters, options, querystring, callback) {
 			var res;
 			var req = new xhr();
+			if(ws.options && ws.options.withCredentials)
+				req.withCredentials = true;
 			if(options && options.cookie) // Node.js only
 				req.headers['Cookie'] = options.cookie;
 			
