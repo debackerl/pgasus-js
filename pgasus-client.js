@@ -35,7 +35,7 @@
 			res.abort = function(reason) {
 				if(req.readyState !== 4) {
 					req.abort();
-					if(callback) callback({"httpStatus": null, "httpStatusText": null, "description": reason, aborted: true});
+					if(callback) callback({"httpStatus": null, "httpStatusText": null, "message": reason, aborted: true});
 				}
 			};
 			
@@ -51,7 +51,7 @@
 								err = e;
 							}
 						} else {
-							err = {"httpStatus": req.status, "httpStatusText": req.statusText, "description": req.responseText};
+							err = {"httpStatus": req.status, "httpStatusText": req.statusText, "message": req.responseText};
 						}
 
 						callback(err, result);
