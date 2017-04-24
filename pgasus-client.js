@@ -129,9 +129,11 @@
 							switch(method) {
 							case "GET":
 							case "DELETE":
-								for(var id in parameters)
-									if(Object.prototype.hasOwnProperty.call(parameters, id) && !done[id])
-										qs.push(id + "=" + encodeURIComponent(JSON.stringify(parameters[id])));
+								for(var id in parameters) {
+									var v = parameters[id];
+									if(Object.prototype.hasOwnProperty.call(parameters, id) && !done[id] && typeof(v) !== 'undefined')
+										qs.push(id + "=" + encodeURIComponent(JSON.stringify(v)));
+								}
 								break;
 							}
 							return qs;
