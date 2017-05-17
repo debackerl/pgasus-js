@@ -10,6 +10,6 @@
 		"url": "https://github.com/debackerl/pgasus-js.git"
 	},
 	"dependencies": {
-		"xmlhttprequest-light": "^0.5.0"
+		"xmlhttprequest-light": "^0.5.2"
 	}
 }
