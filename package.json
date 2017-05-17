@@ -1,7 +1,7 @@
 {
 	"name": "pgasus",
 	"title": "client library for pgasus",
-	"version": "2.0.1",
+	"version": "2.0.2",
 	"main": "pgasus-client",
 	"author": "Laurent Debacker <debackerl gmail com>",
 	"license": "MIT",
