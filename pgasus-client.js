@@ -11,10 +11,22 @@
 		this.sort = "s";
 		this.limit = "l";
 		
+		var mockState = options ? options.mockStateCreator() : null;
+		var methodsMapping = {
+			"GET": "get",
+			"POST": "post",
+			"PUT": "put",
+			"DELETE": "del"
+		};
+
 		var ws = this;
 		var xhr = typeof(XMLHttpRequest) !== 'undefined' ? XMLHttpRequest : require("xmlhttprequest-light").XMLHttpRequest;
 		
-		function load_resource(method, path, parameters, options, querystring, callback) {
+		function load_resource(method, path, parameters, options, mock, querystring, callback) {
+			if(baseUrl === null && mock) {
+				return mock[methodsMapping[method]](parameters, mockState);
+			}
+
 			var res;
 			var req = new xhr();
 			if(ws.options && ws.options.withCredentials)
@@ -93,10 +105,10 @@
 		}
 		
 		return {
-			relation: function(path) {
+			relation: function(path, mock) {
 				var res = omap(function(method) {
 					return function(parameters, options, callback) {
-						return load_resource(method, path, parameters, options, function() {
+						return load_resource(method, path, parameters, options, mock, function() {
 							var qs = [];
 							if(options && options.filter) qs.push(ws.filter + "=" + options.filter);
 							return qs;
@@ -104,7 +116,7 @@
 					};
 				});
 				res.get = function(parameters, options, callback) {
-					return load_resource("GET", path, parameters, options, function() {
+					return load_resource("GET", path, parameters, options, mock, function() {
 						var qs = [];
 						if(options) {
 							if(options.filter) qs.push(ws.filter + "=" + options.filter);
@@ -115,16 +127,16 @@
 					}, callback);
 				};
 				res.post = function(parameters, options, callback) {
-					return load_resource("POST", path, parameters, options, function() {
+					return load_resource("POST", path, parameters, options, mock, function() {
 						return [];
 					}, callback);
 				};
 				return res;
 			},
-			procedure: function(path) {
+			procedure: function(path, mock) {
 				return omap(function(method) {
 					return function(parameters, options, callback) {
-						return load_resource(method, path, parameters, options, function(done) {
+						return load_resource(method, path, parameters, options, mock, function(done) {
 							var qs = [];
 							switch(method) {
 							case "GET":
