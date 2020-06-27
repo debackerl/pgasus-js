@@ -23,8 +23,9 @@
 		var xhr = typeof(XMLHttpRequest) !== 'undefined' ? XMLHttpRequest : require("xmlhttprequest-light").XMLHttpRequest;
 		
 		function load_resource(method, path, parameters, options, mock, querystring, callback) {
-			if(baseUrl === null && mock) {
-				return mock[methodsMapping[method]](parameters, mockState);
+			var mockedResource;
+			if(baseUrl === null && mock && (mockedResource = mock[methodsMapping[method]])) {
+				return mockedResource(parameters, mockState);
 			}
 
 			var res;
